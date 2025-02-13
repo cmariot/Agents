@@ -13,4 +13,6 @@ typing_extensions==4.12.2
 smolagents[transformers]
 smolagents[litellm]
 smolagents[gradio]
-
+selenium
+helium
+pillow
