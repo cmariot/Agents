@@ -10,9 +10,7 @@ from smolagents.models import HfApiModel
 from smolagents import CodeAgent
 from smolagents import GradioUI
 from tools.api_call import ApiCallTool
-from tools.final_answer import FinalAnswerTool
 import os
-from prompts import rag_template_prompt, web_agent_prompt, main_agent_prompt
 
 
 # HF TOKEN
@@ -44,34 +42,19 @@ web_agent = CodeAgent(
     model=model,
     tools=[
         ApiCallTool(),
-        FinalAnswerTool(),
     ],
-
+    additional_authorized_imports=[
+        "requests"
+    ],
     max_steps=3,
     verbosity_level=2,
-    grammar=None,
-    planning_interval=None,
-    prompt_templates=web_agent_prompt,
     name="Web Agent",
     description="""
     An agent that can make API calls and generate final answers.
-
-    Args:
-        method (str): The HTTP method to use for the API call.
-        url (str): The URL to make the API call to.
-        headers (dict): The headers to include in the API call.
-        More options in the kwargs
-    Returns:
-        The response from the API call.
-    Example:
-        response = web_agent("GET", "https://api.example.com/data", headers={"Authorization": "Bearer token"})
     """,
-    # prompt_templates=None,
-    additional_authorized_imports=[
-        "requests"
-    ]
 
 )
+
 
 # ########################################################################### #
 #                                                                             #
@@ -83,7 +66,7 @@ web_agent = CodeAgent(
 rag_agent = CodeAgent(
     model=model,
     tools=[
-        FinalAnswerTool()
+        # FinalAnswerTool()
     ],
     max_steps=6,
     verbosity_level=1,
@@ -91,7 +74,7 @@ rag_agent = CodeAgent(
     planning_interval=None,
     name="RAG Agent",
     description="An agent that retrieves and generates medical data.",
-    prompt_templates=rag_template_prompt,
+    # prompt_templates=rag_template_prompt,
 )
 
 
@@ -109,6 +92,7 @@ agent = CodeAgent(
         web_agent,
         rag_agent
     ],
+    planning_interval=3,
     additional_authorized_imports=["time", "requests"],
     name="Main Agent",
     description="""
@@ -125,7 +109,7 @@ agent = CodeAgent(
     Example:
         response = agent("GET", "https://api.example.com/data", headers={"Authorization": "Bearer token"})
     """,
-    prompt_templates=main_agent_prompt
+    # prompt_templates=main_agent_prompt
 )
 
 
